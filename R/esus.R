@@ -1,5 +1,6 @@
 esus<-function(){
-
+install.packages("purrr")
+require(purrr)
 devtools::install_github("https://github.com/covid19br/nowcaster")
 install.packages("sn")
 require(sn)

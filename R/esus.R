@@ -1,6 +1,8 @@
 esus<-function(){
 install.packages("purrr")
 require(purrr)
+install.packages("ggplot2")
+require(ggplot2)
 devtools::install_github("https://github.com/covid19br/nowcaster")
 install.packages("sn")
 require(sn)

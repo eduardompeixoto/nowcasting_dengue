@@ -243,19 +243,57 @@ dengue <-
     date_report = "report_date",
     data.by.week = T  )
 
+
+dados_by_week_n <- dengue |>
+  pluck("data") |>
+  ungroup() |>
+  dplyr::mutate(epiweek = epiweek(date_onset)) |>
+  dplyr::filter(date_onset >= as.Date("2023-1-01"))
+
+dengue |>
+  pluck("total")  |>
+  mutate(epiweek = epiweek(dt_event)) |>
+  filter(dt_event >= (max(dt_event)-60)) |>
+  ggplot(aes(x = epiweek, y = Median,
+             col = 'Nowcasting (data de Internação vs data de Digitação)')) +
+  geom_line(data = dados_by_week_n,
+            aes(x = epiweek,
+                y = observed,
+                col = 'Casos'),
+            linewidth = 1.2) +
+  geom_ribbon(aes(ymin = LI, ymax = LS, col = NA),
+              alpha = 0.2,
+              show.legend = F) +
+  geom_line(linewidth = 1.2) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 90, size = 14),
+    axis.text.y = element_text(size = 14),
+    legend.text = element_text(size = 14),
+    
+  ) +
+  scale_color_manual(values = c('black','red'),
+                     name = '') +
+  labs(x = 'Semana Epidemiológica',
+       y = 'Nº Casos',
+       title = "Nowcasting de casos de Dengue  (data Internação X data de digitação), Rio de Janeiro, 2023.")
+
+}
+
 split_data <- split(banco, banco$Regiao_residencia)
 
-estado<-cast(banco)
-big<-cast(split_data[["Baía de Ilha Grande"]])
-noroeste<-cast(split_data[["Noroeste"]])
-bl<-cast(split_data[["Baixada Litorânea"]])
-cs<-cast(split_data[["Centro Sul"]])
-mp<-cast(split_data[["Médio Paraíba"]])
-metro1<-cast(split_data[["Metropolitana I"]])
-serrana<-cast(split_data[["Serrana"]])
-norte<-cast(split_data[["Norte"]])
-metro2<-cast(split_data[["Metropolitana II"]])
-
-  list(big,noroeste,bl,cs,mp,metro1,metro2,serrana,norte)
+list(
+cast(banco),
+cast(split_data[["Baía de Ilha Grande"]]),
+cast(split_data[["Noroeste"]]),
+cast(split_data[["Baixada Litorânea"]]),
+cast(split_data[["Centro Sul"]]),
+cast(split_data[["Médio Paraíba"]]),
+cast(split_data[["Metropolitana I"]]),
+cast(split_data[["Serrana"]]),
+cast(split_data[["Norte"]]),
+cast(split_data[["Metropolitana II"]])
+)
 }
   

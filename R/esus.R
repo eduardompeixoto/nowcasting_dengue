@@ -286,16 +286,16 @@ dengue |>
 split_data <- split(banco, banco$Regiao_residencia)
 
 list(
-banco=cast(banco),
-big=cast(split_data[["Baía de Ilha Grande"]]),
-noro=cast(split_data[["Noroeste"]]),
-bl=cast(split_data[["Baixada Litorânea"]]),
-cs=cast(split_data[["Centro Sul"]]),
-mp=cast(split_data[["Médio Paraíba"]]),
-m1=cast(split_data[["Metropolitana I"]]),
-ser=cast(split_data[["Serrana"]]),
-norte=cast(split_data[["Norte"]]),
-m2=cast(split_data[["Metropolitana II"]])
+cast(banco),
+cast(split_data[["Baía de Ilha Grande"]]),
+cast(split_data[["Noroeste"]]),
+cast(split_data[["Baixada Litorânea"]]),
+cast(split_data[["Centro Sul"]]),
+cast(split_data[["Médio Paraíba"]]),
+cast(split_data[["Metropolitana I"]]),
+cast(split_data[["Serrana"]]),
+cast(split_data[["Norte"]]),
+cast(split_data[["Metropolitana II"]])
 )
 }
   

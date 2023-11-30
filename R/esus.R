@@ -20,8 +20,8 @@ colnames(dengue)<-colnames
 
 require(nowcasting)
 
-dengue<-subset(dengue,dengue$class_fin!=5)
-
+dengue<-subset(dengue,dengue$class_fin!=5|is.na(dengue$class_fin))
+dengue<-subset(dengue, substr(dengue$muni_res,1,2)=='33')
 
 a<-dengue
 

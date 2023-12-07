@@ -257,7 +257,7 @@ esus<-function(){
       mutate(epiweek = epiweek(dt_event)) |>
       filter(dt_event >= (max(dt_event)-60)) |>
       ggplot(aes(x = epiweek, y = Median,
-                 col = 'Nowcasting (data de Internação vs data de Digitação)')) +
+                 col = 'Nowcasting (data de início de sintomas vs data de Digitação)')) +
       geom_line(data = dados_by_week_n,
                 aes(x = epiweek,
                     y = observed,
@@ -279,7 +279,7 @@ esus<-function(){
                          name = '') +
       labs(x = 'Semana Epidemiológica',
            y = 'Nº Casos',
-           title = "Nowcasting de casos de Dengue  (data Internação X data de digitação), Rio de Janeiro, 2023.")
+           title = "Nowcasting de casos de Dengue  (data início de sintomas X data de digitação), Rio de Janeiro, 2023.")
     
   }
   

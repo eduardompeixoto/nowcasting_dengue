@@ -1,4 +1,4 @@
-
+esus<-function()<-{
   #install.packages("purrr")
   require(purrr)
   #install.packages("ggplot2")
@@ -494,7 +494,7 @@
     cast(split_data[["Norte"]]),
     cast(split_data[["Metropolitana II"]])
   )
-  
+}  
   
   
   list(regiao, municipio)

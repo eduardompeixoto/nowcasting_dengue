@@ -494,7 +494,8 @@ esus<-function(){
     cast(split_data[["Norte"]]),
     cast(split_data[["Metropolitana II"]])
   )
-}  
+
   
   
   list(regiao, municipio)
+}

@@ -19,7 +19,6 @@ esus<-function(){
   colnames<-c( 'dt_digita', 'dt_sin_pri', 'dt_notifica','muni_res', 'class_fin', 'evolucao')
   colnames(dengue)<-colnames
   
-  require(nowcasting)
   
   dengue<-subset(dengue,dengue$class_fin!=5|is.na(dengue$class_fin))
   dengue<-subset(dengue, substr(dengue$muni_res,1,2)=='33')

@@ -1,6 +1,5 @@
 esus<-function(){
 
-  set.seed(123)
   install.packages("purrr")
   require(purrr)
   install.packages("ggplot2")

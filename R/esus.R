@@ -13,6 +13,7 @@ esus<-function(){
   require(nowcaster)
   require(lubridate)
   require(dplyr)
+  require(stringr)
   
   
   dengue <- read.csv2("http://sistemas.saude.rj.gov.br/tabnetbd/dash/dengue.csv",header = F)
@@ -235,8 +236,9 @@ esus<-function(){
                                     'VOLTA REDONDA-RJ'='Médio Paraíba')
   
   banco$municipio_residencia<-droplevels(banco$municipio_residencia)
-banco<-subset(banco, lubridate::epiweek(banco$dt_notifica)<lubridate::epiweek(Sys.Date()))  
-  cast<-function(x){
+  banco$dt_notifica<-str_replace_all(banco$dt_notifica," ","")
+  
+  banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))<lubridate::epiweek(Sys.Date()))    cast<-function(x){
     dengue <-
       nowcasting_inla(
         dataset = x,

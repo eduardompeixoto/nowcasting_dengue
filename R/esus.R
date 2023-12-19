@@ -236,8 +236,7 @@ esus<-function(){
                                     'VOLTA REDONDA-RJ'='Médio Paraíba')
   
   banco$municipio_residencia<-droplevels(banco$municipio_residencia)
-  
-  
+banco<-subset(banco, lubridate::epiweek(banco$dt_notifica)<lubridate::epiweek(Sys.Date()))  
   cast<-function(x){
     dengue <-
       nowcasting_inla(

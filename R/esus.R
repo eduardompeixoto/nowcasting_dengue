@@ -238,7 +238,8 @@ esus<-function(){
   banco$municipio_residencia<-droplevels(banco$municipio_residencia)
   banco$dt_notifica<-str_replace_all(banco$dt_notifica," ","")
   
-banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))!=51)    
+# banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))!=51)    
+  banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))<lubridate::epiweek(Sys.Date()))    
   
   cast<-function(x){
     dengue <-

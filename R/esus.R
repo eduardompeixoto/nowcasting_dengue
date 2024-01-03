@@ -242,7 +242,7 @@ esus<-function(){
 #  banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))<lubridate::epiweek(Sys.Date()))    
   banco <- dplyr::filter(banco, report_date <= as.Date('2023-12-23'))
   cast<-function(x){
-  print(unname(unique(x['municipio_residencia']))))
+  print(unname(unique(x['municipio_residencia'])))
   dengue <-
     nowcaster::nowcasting_inla(
       dataset = x,

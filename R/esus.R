@@ -239,53 +239,53 @@ esus<-function(){
   banco$dt_notifica<-str_replace_all(banco$dt_notifica," ","")
   
 # banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))!=51)    
-  banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))<lubridate::epiweek(Sys.Date()))    
-  
+#  banco<-subset(banco, lubridate::epiweek(as.Date(banco$dt_notifica,format="%Y%m%d"))<lubridate::epiweek(Sys.Date()))    
+  banco <- dplyr::filter(banco, report_date <= as.Date('2023-12-23'))
   cast<-function(x){
-    dengue <-
-      nowcasting_inla(
-        dataset = x,
-        date_onset = "reference_date",
-        date_report = "report_date",
-        data.by.week = T  )
-    
-    
-    dados_by_week_n <- dengue |>
-      pluck("data") |>
-      ungroup() |>
-      dplyr::mutate(epiweek = epiweek(date_onset)) |>
-      dplyr::filter(date_onset >= as.Date("2023-1-01"))
-    
-    dengue |>
-      pluck("total")  |>
-      mutate(epiweek = epiweek(dt_event)) |>
-      filter(dt_event >= (max(dt_event)-60)) |>
-      ggplot(aes(x = epiweek, y = Median,
-                 col = 'Nowcasting (data de início de sintomas vs data de Digitação)')) +
-      geom_line(data = dados_by_week_n,
-                aes(x = epiweek,
-                    y = observed,
-                    col = 'Casos'),
-                linewidth = 1.2) +
-      geom_ribbon(aes(ymin = LI, ymax = LS, col = NA),
-                  alpha = 0.2,
-                  show.legend = F) +
-      geom_line(linewidth = 1.2) +
-      theme_bw() +
-      theme(
-        legend.position = "bottom",
-        axis.text.x = element_text(angle = 90, size = 14),
-        axis.text.y = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        
-      ) +
-      scale_color_manual(values = c('black','red'),
-                         name = '') +
-      labs(x = 'Semana Epidemiológica',
-           y = 'Nº Casos',
-           title = "Nowcasting de casos de Dengue  (data início de sintomas X data de digitação), Rio de Janeiro, 2023.")
-    
-  }
+  dengue <-
+    nowcaster::nowcasting_inla(
+      dataset = x,
+      date_onset = "reference_date",
+      date_report = "report_date",
+      data.by.week = T  )
+  
+  
+  dados_by_week_n <- dengue |>
+    purrr::pluck("data") |>
+    dplyr::ungroup() |>
+    dplyr::mutate(epiweek = epiweek(date_onset)) |>
+    dplyr::filter(date_onset >= as.Date("2023-1-01"))
+  
+  dengue |>
+    purrr::pluck("total")  |>
+    dplyr::mutate(epiweek = epiweek(dt_event)) |>
+    dplyr::filter(dt_event >= (max(dt_event)-60)) |>
+    ggplot2::ggplot(ggplot2::aes(x = epiweek, y = Median,
+               col = 'Nowcasting (data de início de sintomas vs data de Digitação)')) +
+    ggplot2::geom_line(data = dados_by_week_n,
+                       ggplot2::aes(x = epiweek,
+                  y = observed,
+                  col = 'Casos'),
+              linewidth = 1.2) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = LI, ymax = LS, col = NA),
+                alpha = 0.2,
+                show.legend = F) +
+    ggplot2::geom_line(linewidth = 1.2) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      legend.position = "bottom",
+      axis.text.x = element_text(angle = 90, size = 14),
+      axis.text.y = element_text(size = 14),
+      legend.text = element_text(size = 14),
+      
+    ) +
+    ggplot2::scale_color_manual(values = c('black','red'),
+                       name = '') +
+    ggplot2::labs(x = 'Semana Epidemiológica',
+         y = 'Nº Casos',
+         title = "Nowcasting de casos de Dengue  (data início de sintomas X data de digitação), Rio de Janeiro, 2023.")
+  
+}
   
   split_data <- split(banco, banco$municipio_residencia)
   # Apply the cast function to each part of the split data
@@ -295,195 +295,100 @@ esus<-function(){
 
 
 
-ANGRA_DOS_REIS<-cast(split_data[[1]])
-APERIBE<-cast(split_data[[2]])
-ARARUAMA<-cast(split_data[[3]])
-# AREAL<-cast(split_data[[4]])
-ARMACAO_DOS_BUZIOS<-cast(split_data[[5]])
-ARRAIAL_DO_CABO<-cast(split_data[[6]])
-Barra_do_Piraí<-cast(split_data[[7]])
-BARRA_MANSA<-cast(split_data[[8]])
-BELFORD_ROXO<-cast(split_data[[9]])
-#BOM_JARDIM<-cast(split_data[[10]])
-BOM_JESUS_DO_ITABAPOANA<-cast(split_data[[11]])
-CABO_FRIO<-cast(split_data[[12]])
-CACHOEIRAS_DE_MACACU<-cast(split_data[[13]])
-CAMBUCI<-cast(split_data[[14]])
-CARAPEBUS<-cast(split_data[[15]])
-#COMENDADOR_LEVY_GASPARIAN<-cast(split_data[[16]])
-CAMPOS_DOS_GOYTACAZES<-cast(split_data[[17]])
-# CANTAGALO<-cast(split_data[[18]])
-CARDOSO_MOREIRA<-cast(split_data[[19]])
-CARMO<-cast(split_data[[20]])
-CASIMIRO_DE_ABREU<-cast(split_data[[21]])
-CONCEICAO_DE_MACABU<-cast(split_data[[22]])
-CORDEIRO<-cast(split_data[[23]])
+ANGRA_DOS_REIS <- cast(split_data[[1]])
+APERIBE <- cast(split_data[[2]])
+ARARUAMA <- cast(split_data[[3]])
+AREAL <- cast(split_data[[4]])
+ARMACAO_DOS_BUZIOS <- cast(split_data[[5]])
+ARRAIAL_DO_CABO <- cast(split_data[[6]])
+Barra_do_Piraí <- cast(split_data[[7]])
+BARRA_MANSA <- cast(split_data[[8]])
+BELFORD_ROXO <- cast(split_data[[9]])
+BOM_JARDIM <- cast(split_data[[10]])
+BOM_JESUS_DO_ITABAPOANA <- cast(split_data[[11]])
+CABO_FRIO <- cast(split_data[[12]])
+CACHOEIRAS_DE_MACACU <- cast(split_data[[13]])
+CAMBUCI <- cast(split_data[[14]])
+CARAPEBUS <- cast(split_data[[15]])
+COMENDADOR_LEVY_GASPARIAN <- cast(split_data[[16]])
+CAMPOS_DOS_GOYTACAZES <- cast(split_data[[17]])
+CANTAGALO <- cast(split_data[[18]])
+CARDOSO_MOREIRA <- cast(split_data[[19]])
+CARMO <- cast(split_data[[20]])
+CASIMIRO_DE_ABREU <- cast(split_data[[21]])
+CONCEICAO_DE_MACABU <- cast(split_data[[22]])
+CORDEIRO <- cast(split_data[[23]])
 # DUAS_BARRAS<-cast(split_data[[24]])
-DUQUE_DE_CAXIAS<-cast(split_data[[25]])
-ENGENHEIRO_PAULO_DE_FRONTIN<-cast(split_data[[26]])
-GUAPIMIRIM<-cast(split_data[[27]])
-IGUABA_GRANDE<-cast(split_data[[28]])
-Itaboraí<-cast(split_data[[29]])
-ITAGUAI<-cast(split_data[[30]])
-ITALVA<-cast(split_data[[31]])
-ITAOCARA<-cast(split_data[[32]])
-ITAPERUNA<-cast(split_data[[33]])
-ITATIAIA<-cast(split_data[[34]])
-JAPERI<-cast(split_data[[35]])
-LAJE_DO_MURIAE<-cast(split_data[[36]])
-MACAE<-cast(split_data[[37]])
-MACUCO<-cast(split_data[[38]])
-MAGE<-cast(split_data[[39]])
-MANGARATIBA<-cast(split_data[[40]])
-MARICA<-cast(split_data[[41]])
-MENDES<-cast(split_data[[42]])
-MESQUITA<-cast(split_data[[43]])
-MIGUEL_PEREIRA<-cast(split_data[[44]])
-#MIRACEMA<-cast(split_data[[45]])
-NATIVIDADE<-cast(split_data[[46]])
-NILOPOLIS<-cast(split_data[[47]])
-NITEROI<-cast(split_data[[48]])
-NOVA_FRIBURGO<-cast(split_data[[49]])
-área_de_Nova_Iguaçu<-cast(split_data[[50]])
-PARACAMBI<-cast(split_data[[51]])
-#PARAIBA_DO_SUL<-cast(split_data[[52]])
-PARATY<-cast(split_data[[53]])
-PATY_DO_ALFERES<-cast(split_data[[54]])
-PETROPOLIS<-cast(split_data[[55]])
-PINHEIRAL<-cast(split_data[[56]])
-PIRAI<-cast(split_data[[57]])
-PORCIUNCULA<-cast(split_data[[58]])
-PORTO_REAL<-cast(split_data[[59]])
-QUATIS<-cast(split_data[[60]])
-QUEIMADOS<-cast(split_data[[61]])
-QUISSAMA<-cast(split_data[[62]])
-RESENDE<-cast(split_data[[63]])
-RIO_BONITO<-cast(split_data[[64]])
+DUQUE_DE_CAXIAS <- cast(split_data[[25]])
+ENGENHEIRO_PAULO_DE_FRONTIN <- cast(split_data[[26]])
+GUAPIMIRIM <- cast(split_data[[27]])
+IGUABA_GRANDE <- cast(split_data[[28]])
+Itaboraí <- cast(split_data[[29]])
+ITAGUAI <- cast(split_data[[30]])
+ITALVA <- cast(split_data[[31]])
+ITAOCARA <- cast(split_data[[32]])
+ITAPERUNA <- cast(split_data[[33]])
+ITATIAIA <- cast(split_data[[34]])
+JAPERI <- cast(split_data[[35]])
+LAJE_DO_MURIAE <- cast(split_data[[36]])
+MACAE <- cast(split_data[[37]])
+MACUCO <- cast(split_data[[38]])
+MAGE <- cast(split_data[[39]])
+MANGARATIBA <- cast(split_data[[40]])
+MARICA <- cast(split_data[[41]])
+MENDES <- cast(split_data[[42]])
+MESQUITA <- cast(split_data[[43]])
+MIGUEL_PEREIRA <- cast(split_data[[44]])
+MIRACEMA <- cast(split_data[[45]])
+NATIVIDADE <- cast(split_data[[46]])
+NILOPOLIS <- cast(split_data[[47]])
+NITEROI <- cast(split_data[[48]])
+NOVA_FRIBURGO <- cast(split_data[[49]])
+área_de_Nova_Iguaçu <- cast(split_data[[50]])
+PARACAMBI <- cast(split_data[[51]])
+PARAIBA_DO_SUL <- cast(split_data[[52]])
+PARATY <- cast(split_data[[53]])
+PATY_DO_ALFERES <- cast(split_data[[54]])
+PETROPOLIS <- cast(split_data[[55]])
+PINHEIRAL <- cast(split_data[[56]])
+PIRAI <- cast(split_data[[57]])
+PORCIUNCULA <- cast(split_data[[58]])
+PORTO_REAL <- cast(split_data[[59]])
+QUATIS <- cast(split_data[[60]])
+QUEIMADOS <- cast(split_data[[61]])
+QUISSAMA <- cast(split_data[[62]])
+RESENDE <- cast(split_data[[63]])
+RIO_BONITO <- cast(split_data[[64]])
 # RIO_CLARO<-cast(split_data[[65]])
 #RIO_DAS_FLORES<-cast(split_data[[66]])
-RIO_DAS_OSTRAS<-cast(split_data[[67]])
-RIO_DE_JANEIRO<-cast(split_data[[68]])
+RIO_DAS_OSTRAS <- cast(split_data[[67]])
+RIO_DE_JANEIRO <- cast(split_data[[68]])
 # SANTA_MARIA_MADALENA<-cast(split_data[[69]])
-SANTO_ANTONIO_DE_PADUA<-cast(split_data[[70]])
-SAO_FRANCISCO_DE_ITABAPOANA<-cast(split_data[[71]])
-SAO_FIDELIS<-cast(split_data[[72]])
-SAO_GONCALO<-cast(split_data[[73]])
-SAO_JOAO_DA_BARRA<-cast(split_data[[74]])
-SAO_JOAO_DE_MERITI<-cast(split_data[[75]])
-SAO_JOSE_DE_UBA<-cast(split_data[[76]])
+SANTO_ANTONIO_DE_PADUA <- cast(split_data[[70]])
+SAO_FRANCISCO_DE_ITABAPOANA <- cast(split_data[[71]])
+SAO_FIDELIS <- cast(split_data[[72]])
+SAO_GONCALO <- cast(split_data[[73]])
+SAO_JOAO_DA_BARRA <- cast(split_data[[74]])
+SAO_JOAO_DE_MERITI <- cast(split_data[[75]])
+SAO_JOSE_DE_UBA <- cast(split_data[[76]])
 # SAO_JOSE_DO_VALE_DO_RIO_PRETO<-cast(split_data[[77]])
-SAO_PEDRO_DA_ALDEIA<-cast(split_data[[78]])
+SAO_PEDRO_DA_ALDEIA <- cast(split_data[[78]])
 #  SAO_SEBASTIAO_DO_ALTO<-cast(split_data[[79]])
-SAPUCAIA<-cast(split_data[[80]])
-SAQUAREMA<-cast(split_data[[81]])
-SEROPEDICA<-cast(split_data[[82]])
+SAPUCAIA <- cast(split_data[[80]])
+SAQUAREMA <- cast(split_data[[81]])
+SEROPEDICA <- cast(split_data[[82]])
 # SILVA_JARDIM<-cast(split_data[[83]])
-SUMIDOURO<-cast(split_data[[84]])
-TANGUA<-cast(split_data[[85]])
-#  TERESOPOLIS<-cast(split_data[[86]])
-#  TRAJANO_DE_MORAES<-cast(split_data[[87]])
-TRES_RIOS<-cast(split_data[[88]])
-#VALENCA<-cast(split_data[[89]])
-VARRE_SAI<-cast(split_data[[90]])
-VASSOURAS<-cast(split_data[[91]])
-VOLTA_REDONDA<-cast(split_data[[92]])
+SUMIDOURO <- cast(split_data[[84]])
+TANGUA <- cast(split_data[[85]])
+TERESOPOLIS <- cast(split_data[[86]])
+# TRAJANO_DE_MORAES<-cast(split_data[[87]])
+TRES_RIOS <- cast(split_data[[88]])
+# VALENCA<-cast(split_data[[89]])
+VARRE_SAI <- cast(split_data[[90]])
+VASSOURAS <- cast(split_data[[91]])
+VOLTA_REDONDA <- cast(split_data[[92]])
 
-municipio<-list(
-  ANGRA_DOS_REIS,
-  APERIBE,
-  ARARUAMA,
-  #  AREAL,
-  ARMACAO_DOS_BUZIOS,
-  ARRAIAL_DO_CABO,
-  Barra_do_Piraí,
-  BARRA_MANSA,
-  BELFORD_ROXO,
-  # BOM_JARDIM,
-  BOM_JESUS_DO_ITABAPOANA,
-  CABO_FRIO,
-  CACHOEIRAS_DE_MACACU,
-  CAMBUCI,
-  CARAPEBUS,
-  # COMENDADOR_LEVY_GASPARIAN,
-  CAMPOS_DOS_GOYTACAZES,
-  # CANTAGALO,
-  CARDOSO_MOREIRA,
-  CARMO,
-  CASIMIRO_DE_ABREU,
-  CONCEICAO_DE_MACABU,
-  CORDEIRO,
-  #DUAS_BARRAS,
-  DUQUE_DE_CAXIAS,
-  ENGENHEIRO_PAULO_DE_FRONTIN,
-  GUAPIMIRIM,
-  IGUABA_GRANDE,
-  Itaboraí,
-  ITAGUAI,
-  ITALVA,
-  ITAOCARA,
-  ITAPERUNA,
-  ITATIAIA,
-  JAPERI,
-  LAJE_DO_MURIAE,
-  MACAE,
-  MACUCO,
-  MAGE,
-  MANGARATIBA,
-  MARICA,
-  MENDES,
-  MESQUITA,
-  MIGUEL_PEREIRA,
-  # MIRACEMA,
-  NATIVIDADE,
-  NILOPOLIS,
-  NITEROI,
-  NOVA_FRIBURGO,
-  área_de_Nova_Iguaçu,
-  PARACAMBI,
-  # PARAIBA_DO_SUL,
-  PARATY,
-  PATY_DO_ALFERES,
-  PETROPOLIS,
-  PINHEIRAL,
-  PIRAI,
-  PORCIUNCULA,
-  PORTO_REAL,
-  QUATIS,
-  QUEIMADOS,
-  QUISSAMA,
-  RESENDE,
-  RIO_BONITO,
-  # RIO_CLARO,
-  #  RIO_DAS_FLORES,
-  RIO_DAS_OSTRAS,
-  RIO_DE_JANEIRO,
- # SANTA_MARIA_MADALENA,
-  SANTO_ANTONIO_DE_PADUA,
-  SAO_FRANCISCO_DE_ITABAPOANA,
-  SAO_FIDELIS,
-  SAO_GONCALO,
-  SAO_JOAO_DA_BARRA,
-  SAO_JOAO_DE_MERITI,
-  SAO_JOSE_DE_UBA,
-  # SAO_JOSE_DO_VALE_DO_RIO_PRETO,
-  SAO_PEDRO_DA_ALDEIA,
-  #  SAO_SEBASTIAO_DO_ALTO,
-  SAPUCAIA,
-  SAQUAREMA,
-  SEROPEDICA,
-  #SILVA_JARDIM,
-  SUMIDOURO,
-  TANGUA,
-  # TERESOPOLIS,
-  #  TRAJANO_DE_MORAES,
-  TRES_RIOS,
-  VALENCA,
-  VARRE_SAI,
-  VASSOURAS,
-  VOLTA_REDONDA
-  
 )
-
 
 split_data <- split(banco, banco$Regiao_residencia)
 
@@ -499,6 +404,7 @@ regiao<-list(
   cast(split_data[["Norte"]]),
   cast(split_data[["Metropolitana II"]])
 )
+
 
 
 
